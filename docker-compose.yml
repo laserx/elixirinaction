@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  enb:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    # image: pprzetacznik/ielixir
+    container_name: enb
+    volumes:
+      - ./workspace:/home/jovyan/work
+    ports:
+      - 8888:8888
+    
