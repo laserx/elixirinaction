@@ -7,9 +7,9 @@ ENV OTP_VERSION="21.0.2"
 RUN set -ex; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-        make \
+    make \
 		git \
-        curl \
+    curl \
 		autoconf \
 		dpkg-dev \
 		g++ \
@@ -32,7 +32,7 @@ RUN set -xe \
 	# && apt-get update \
 	&& apt-get install -y --no-install-recommends $runtimeDeps \
 	&& apt-get install -y --no-install-recommends $buildDeps \
-    && apt-get install -y curl autoconf dpkg-dev \
+  && apt-get install -y curl autoconf dpkg-dev \
 	&& curl -fSL -o otp-src.tar.gz "$OTP_DOWNLOAD_URL" \
 	&& echo "$OTP_DOWNLOAD_SHA256  otp-src.tar.gz" | sha256sum -c - \
 	&& export ERL_TOP="/usr/src/otp_src_${OTP_VERSION%%@*}" \
