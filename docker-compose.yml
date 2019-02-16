@@ -2,10 +2,7 @@ version: '3'
 
 services:
   enb:
-    build:
-      context: ./
-      dockerfile: docker/Dockerfile
-    # image: pprzetacznik/ielixir
+    image: laserx/enb:latest
     container_name: enb
     volumes:
       - ./workspace:/home/jovyan/work
