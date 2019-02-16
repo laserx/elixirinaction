@@ -2,37 +2,47 @@ FROM jupyter/base-notebook as requirements
 
 USER root
 
-ENV OTP_VERSION="21.0.2"
-
-RUN set -ex; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-    make \
-		git \
-    curl \
-		autoconf \
-		dpkg-dev \
-		g++ \
-		gcc \
-		libcurl4-openssl-dev \
-		libncurses5-dev \
-		libncursesw5-dev \
-		libssl-dev \
-		libxslt-dev
-
+# preparing to setup environment
 RUN set -xe \
-	&& OTP_DOWNLOAD_URL="https://github.com/erlang/otp/archive/OTP-${OTP_VERSION}.tar.gz" \
-	&& OTP_DOWNLOAD_SHA256="bc64a6edcbc403a56b4f75997394697addec61ad67623dba81d11729abb931a8" \
+	&& baseDeps='build-essential \
+			curl \
+			autoconf \
+			dpkg-dev \
+			git \
+			make \
+			g++ \
+			gcc \
+			libcurl4-openssl-dev \
+			libssl-dev \
+			libncurses5-dev \
+			libncursesw5-dev' \
 	&& runtimeDeps='libodbc1 \
 			libsctp1 \
 			libwxgtk3.0' \
 	&& buildDeps='unixodbc-dev \
 			libsctp-dev \
 			libwxgtk3.0-dev' \
-	# && apt-get update \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends $baseDeps \
 	&& apt-get install -y --no-install-recommends $runtimeDeps \
-	&& apt-get install -y --no-install-recommends $buildDeps \
-  && apt-get install -y curl autoconf dpkg-dev \
+	&& apt-get install -y --no-install-recommends $buildDeps
+
+ENV OTP_VERSION="21.2.5"
+
+# We'll install the build dependencies for erlang-odbc along with the erlang
+# build process:
+RUN set -xe \
+	&& OTP_DOWNLOAD_URL="https://github.com/erlang/otp/archive/OTP-${OTP_VERSION}.tar.gz" \
+	&& OTP_DOWNLOAD_SHA256="3ff578ab020a714be25d6787b81938df016db375692d4126a28f1303e6e9c165" \
+	# && runtimeDeps='libodbc1 \
+	# 		libsctp1 \
+	# 		libwxgtk3.0' \
+	# && buildDeps='unixodbc-dev \
+	# 		libsctp-dev \
+	# 		libwxgtk3.0-dev' \
+	# && apt-get update \
+	# && apt-get install -y --no-install-recommends $runtimeDeps \
+	# && apt-get install -y --no-install-recommends $buildDeps \
 	&& curl -fSL -o otp-src.tar.gz "$OTP_DOWNLOAD_URL" \
 	&& echo "$OTP_DOWNLOAD_SHA256  otp-src.tar.gz" | sha256sum -c - \
 	&& export ERL_TOP="/usr/src/otp_src_${OTP_VERSION%%@*}" \
@@ -66,11 +76,11 @@ RUN set -xe \
 	&& install -v ./rebar /usr/local/bin/ \
 	&& rm -rf /usr/src/rebar-src
 
-ENV REBAR3_VERSION="3.6.1"
+ENV REBAR3_VERSION="3.8.0"
 
 RUN set -xe \
 	&& REBAR3_DOWNLOAD_URL="https://github.com/erlang/rebar3/archive/${REBAR3_VERSION}.tar.gz" \
-	&& REBAR3_DOWNLOAD_SHA256="40b3c85440f3235c7b149578d0211bdf57d1c66390f888bb771704f8abc71033" \
+	&& REBAR3_DOWNLOAD_SHA256="fc4d08037d39bcc651a4a749f8a5b1a10b2205527df834c2aee8f60725c3f431" \
 	&& mkdir -p /usr/src/rebar3-src \
 	&& curl -fSL -o rebar3-src.tar.gz "$REBAR3_DOWNLOAD_URL" \
 	&& echo "$REBAR3_DOWNLOAD_SHA256 rebar3-src.tar.gz" | sha256sum -c - \
@@ -100,7 +110,7 @@ USER $NB_UID
 
 CMD ["iex"]
 
-from requirements
+FROM requirements
 
 USER root
 
@@ -123,10 +133,10 @@ RUN set -xe \
   && cd ielixir \
   && ls -alh \
   && mix local.hex --force \
-  && mix local.rebar --forcea \
+  && mix local.rebar --force \
   && mix deps.get \
   && mix deps.compile \
-  && ./install_script.sh \
+  # && ./install_script.sh \
   && conda install --quiet --yes 'jupyter_console'
 
 CMD ["start-notebook.sh"]
