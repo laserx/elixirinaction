@@ -121,15 +121,17 @@ RUN set -ex; \
     libblas-dev \
     liblapack-dev \
     libatlas-base-dev \
+		git \
 	&& rm -rf /var/lib/apt/lists/*
 
 USER $NB_UID
 
 RUN set -xe \
-  && curl -s https://api.github.com/repos/pprzetacznik/IElixir/releases/latest | grep "tarball_url" | sed -n -e 's/.*tarball_url": "\(.*\)".*/\1/p' | xargs -t curl -fSL -o ielixir.tar.gz \
-  && mkdir ielixir \
-  && tar -zxvf ielixir.tar.gz -C ielixir --strip-components=1 \
-  && rm ielixir.tar.gz \
+  # && curl -s https://api.github.com/repos/pprzetacznik/IElixir/releases/latest | grep "tarball_url" | sed -n -e 's/.*tarball_url": "\(.*\)".*/\1/p' | xargs -t curl -fSL -o ielixir.tar.gz \
+  # && mkdir ielixir \
+  # && tar -zxvf ielixir.tar.gz -C ielixir --strip-components=1 \
+  # && rm ielixir.tar.gz \
+	&& git clone https://github.com/pprzetacznik/IElixir.git ielixir \
   && cd ielixir \
   && ls -alh \
   && mix local.hex --force \
