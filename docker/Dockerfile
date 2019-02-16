@@ -136,7 +136,7 @@ RUN set -xe \
   && mix local.rebar --force \
   && mix deps.get \
   && mix deps.compile \
-  # && ./install_script.sh \
+  && ./install_script.sh \
   && conda install --quiet --yes 'jupyter_console'
 
 CMD ["start-notebook.sh"]
