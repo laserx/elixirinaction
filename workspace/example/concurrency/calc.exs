@@ -9,6 +9,7 @@ end
 
 {x, y} = Calc.gen(10000) |> Calc.split()
 
-Calc.run({x, y})
+s_1 = spawn(fn x -> Enum.sum(x) end)
+s_2 = spawn(fn y -> Enum.sum(y) end)
 
-IO.inspect(x)
+IO.inspect(s_1)
