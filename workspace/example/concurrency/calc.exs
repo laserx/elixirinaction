@@ -5,11 +5,28 @@ defmodule Calc do
     enumerable
     |> Enum.split(enumerable |> length() |> div(2))
   end
+
+  def sum(enumerable, pid) do
+    spawn(fn -> send(pid, {:value, Enum.sum(enumerable)}) end)
+  end
+
+  def receiver() do
+    receive do
+      {:value, value} ->
+        IO.inspect(value)
+    after
+      1_000 ->
+        IO.puts("nothing after 1s")
+        Process.exit(self(), :normal)
+    end
+
+    receiver()
+  end
 end
 
 {x, y} = Calc.gen(10000) |> Calc.split()
 
-s_1 = spawn(fn x -> Enum.sum(x) end)
-s_2 = spawn(fn y -> Enum.sum(y) end)
+Calc.sum(x, self())
+Calc.sum(y, self())
 
-IO.inspect(s_1)
+Calc.receiver()

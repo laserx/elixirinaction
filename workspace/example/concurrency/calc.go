@@ -20,9 +20,7 @@ func gen(t int) []int {
 }
 
 func main() {
-	s := gen(10)
-
-	fmt.Println(s)
+	s := gen(10000)
 
 	c := make(chan int)
 	go sum(s[:len(s)/2], c)
