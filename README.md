@@ -4,6 +4,7 @@
    1. Elixir foundation
    1. Recursion
    1. Currying in elixir
+   1. Concurrency models: Actor, STM and CSP
 
 ......
 wip
